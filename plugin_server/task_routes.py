@@ -5,6 +5,8 @@ from sqlalchemy.orm import Session
 from plugin_server.auth import get_current_user_id
 from plugin_server.schemas import TaskRequest
 
+from sqlalchemy import or_
+
 router = APIRouter()
 
 
@@ -30,7 +32,7 @@ def update_task_status(task: TaskRequest, db: Session = Depends(get_db)):
 @router.get("/get_tasks")
 async def get_tasks(user_id: int = Depends(get_current_user_id), db: Session = Depends(get_db)):
 
-    tasks = db.query(TaskStorage).filter_by(user_id=user_id).all()
+    tasks = db.query(TaskStorage).filter(TaskStorage.user_id == user_id, or_(TaskStorage.status == "PENDING", TaskStorage.status == "STARTED")).all()
     if tasks:
         tasks_list = []
         for task in tasks:
@@ -39,3 +41,12 @@ async def get_tasks(user_id: int = Depends(get_current_user_id), db: Session = D
         return {"tasks": tasks_list}
     else:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No tasks found")
+
+
+@router.get("/get_all_queue_tasks")
+async def get_all_queue_tasks(db: Session = Depends(get_db)):
+
+    pending_tasks_count = db.query(TaskStorage).filter_by(status="PENDING").count()
+    started_tasks_count = db.query(TaskStorage).filter_by(status="STARTED").count()
+
+    return {"pending_tasks_count": pending_tasks_count, "started_tasks_count": started_tasks_count}

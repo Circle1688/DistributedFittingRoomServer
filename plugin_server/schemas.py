@@ -53,7 +53,7 @@ class ImageOptions(BaseModel):
 
 
 class VideoOptions(BaseModel):
-	pixverse: bool
+	video_live: bool
 	duration: int
 	negative_prompt: str
 	prompt: str
@@ -84,3 +84,8 @@ class TaskRequest(BaseModel):
 	user_id: int
 	task_id: str
 	status: str
+
+
+class UpscaleRequest(BaseModel):
+	video_url: str
+	vip: bool

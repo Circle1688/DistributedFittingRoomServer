@@ -53,6 +53,10 @@ def clear_folder(directory):
 
 def compress_image(source_path, quality, thumbnail_width):
     with Image.open(source_path) as img:
+        # 如果图片是RGBA模式，转换为RGB模式
+        if img.mode == 'RGBA':
+            img = img.convert('RGB')
+
         # 计算缩略图的高度，保持图片的原始宽高比
         width, height = img.size
         thumbnail_height = int((thumbnail_width / width) * height)
@@ -70,15 +74,14 @@ def compress_image(source_path, quality, thumbnail_width):
 def kill_process_by_name(process_name):
     for proc in psutil.process_iter(['pid', 'name']):
         try:
-            if proc.info['name'] == process_name:
-                proc = psutil.Process(proc.info['pid'])
+            if proc.name() == process_name:
                 proc.terminate()  # 先尝试发送SIGTERM信号
                 try:
                     proc.wait(timeout=3)  # 等待3秒，看进程是否结束
                 except psutil.TimeoutExpired:
-                    print(f"Process {process_name} PID: {proc.info['pid']} No response to SIGTERM signal, try sending SIGKILL signal")
+                    print(f"Process {process_name} PID: {proc.pid} No response to SIGTERM signal, try sending SIGKILL signal")
                     proc.kill()  # 发送SIGKILL信号强制结束进程
                     proc.wait(timeout=3)  # 再次等待进程结束
-                print(f"Process{process_name} PID: {proc.info['pid']} has been ended")
+                print(f"Process {process_name} PID: {proc.pid} has been ended")
         except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
             print(f"Error while ending process: {e}")
