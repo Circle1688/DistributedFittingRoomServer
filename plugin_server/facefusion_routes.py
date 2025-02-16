@@ -3,7 +3,7 @@ import time
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from plugin_server.gallery_routes import get_avatar_filepath, get_gallery_dir
+from plugin_server.gallery_routes import get_avatar_filepath
 from plugin_server.schemas import *
 from plugin_server.auth import get_current_user_id
 from plugin_server.database_func import get_db
@@ -19,9 +19,9 @@ router = APIRouter()
 
 def create_generate_task(request_data, user_id, task_type):
     # 请求数据
-    ue_json_data = request_data.dict()
+    data = request_data.dict()
 
-    args = {"data": ue_json_data, "user_id": user_id, "task_type": task_type}
+    args = {"data": data, "user_id": user_id, "task_type": task_type}
 
     timestamp = time.time()
     if request_data.vip:
@@ -43,12 +43,6 @@ def create_generate_task(request_data, user_id, task_type):
 @router.post("/generate")
 async def generate(request: GenerateRequest, user_id: int = Depends(get_current_user_id),
                    db: Session = Depends(get_db)):
-    # 获取头像
-    source_image_path = get_avatar_filepath(user_id)
-
-    if not os.path.exists(source_image_path):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User avatar not found")
-
     task_id = create_generate_task(request, user_id, task_type='image')
     add_task(user_id, task_id, db)
     return {"task_id": task_id}
@@ -57,12 +51,6 @@ async def generate(request: GenerateRequest, user_id: int = Depends(get_current_
 @router.post("/generate_video")
 async def generate_video(request: VideoGenerateRequest, user_id: int = Depends(get_current_user_id),
                          db: Session = Depends(get_db)):
-    # 获取头像
-    source_image_path = get_avatar_filepath(user_id)
-
-    if not os.path.exists(source_image_path):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User avatar not found")
-
     task_id = create_generate_task(request, user_id, task_type='video')
     add_task(user_id, task_id, db)
     return {"task_id": task_id}
@@ -71,19 +59,8 @@ async def generate_video(request: VideoGenerateRequest, user_id: int = Depends(g
 @router.post("/upscale")
 async def upscale(request: UpscaleRequest, user_id: int = Depends(get_current_user_id),
                   db: Session = Depends(get_db)):
-    # 请求数据
-    video_url = request.video_url + ".mp4"
-
-    # 读取文件
-    store_dir = get_gallery_dir(user_id)
-    filepath = os.path.join(store_dir, video_url)
-
-    if not os.path.exists(filepath):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Video file not found")
-
     task_id = create_generate_task(request, user_id, task_type='upscale')
     add_task(user_id, task_id, db)
-
     return {"task_id": task_id}
 
 

@@ -1,9 +1,11 @@
-import glob
 import shutil
-
+import requests
+from moviepy import VideoFileClip
 import psutil
 from PIL import Image
 import os
+from io import BytesIO
+from plugin_server.config import TEMP_DIR
 
 
 def find_png_files(directory):
@@ -23,15 +25,20 @@ def get_files(directory):
     return file_list
 
 
-def get_sorted_files(directory):
-    # 获取目录下的所有文件
-    files = glob.glob(os.path.join(directory, '*'))
+def download_file(url):
+    filename = os.path.basename(url)
 
-    # 按修改时间排序（最新的在前）
-    files.sort(key=os.path.getmtime, reverse=True)
+    response = requests.get(url)
 
-    # 只返回文件名
-    return [os.path.basename(file) for file in files]
+    if response.status_code == 200:
+        file_path = os.path.join(TEMP_DIR, filename)
+        with open(file_path, "wb") as file:
+            file.write(response.content)
+        print("Download successfully")
+        return file_path
+    else:
+        print("Download failed")
+        return None
 
 
 def clear_folder(directory):
@@ -71,6 +78,26 @@ def compress_image(source_path, quality, thumbnail_width):
         img.save(thumbnail_path, quality=quality)
 
 
+def compress_image_bytes(image_bytes, quality, thumbnail_width):
+    with Image.open(BytesIO(image_bytes)) as img:
+        # 如果图片是RGBA模式，转换为RGB模式
+        if img.mode == 'RGBA':
+            img = img.convert('RGB')
+
+        # 计算缩略图的高度，保持图片的原始宽高比
+        width, height = img.size
+        thumbnail_height = int((thumbnail_width / width) * height)
+
+        # 调整图片大小为缩略图尺寸
+        img.thumbnail((thumbnail_width, thumbnail_height))
+
+        output_buffer = BytesIO()
+        img.save(output_buffer, format='JPEG', quality=quality)
+
+        # 获取bytes数据并返回
+        return output_buffer.getvalue()
+
+
 def kill_process_by_name(process_name):
     for proc in psutil.process_iter(['pid', 'name']):
         try:
@@ -85,3 +112,21 @@ def kill_process_by_name(process_name):
                 print(f"Process {process_name} PID: {proc.pid} has been ended")
         except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
             print(f"Error while ending process: {e}")
+
+
+def extract_video_cover(video_path):
+    # 加载视频文件
+    clip = VideoFileClip(video_path)
+
+    # 获取视频文件的目录和文件名（不带扩展名）
+    dir_path, filename = os.path.split(video_path)
+    name, ext = os.path.splitext(filename)
+
+    # 生成封面图的文件名
+    output_image_path = os.path.join(dir_path, f"{name}_thumbnail.jpg")
+
+    # 保存为图片
+    clip.save_frame(output_image_path, t=0)
+
+    # 关闭视频文件
+    clip.close()

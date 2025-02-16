@@ -375,6 +375,35 @@ body_dimensions is a list, you need to add the key-value pairs.
 
 
 
+### /upscale
+
+**POST**
+
+**Authorization**
+
+
+
+#### Request body
+
+```json
+{
+   "video_url": "string",
+   "vip":true
+}
+```
+
+
+
+#### Responses
+
+```json
+{
+   "task_id": "string"
+}
+```
+
+
+
 ### /generate/{task_id}
 
 **GET**
@@ -503,6 +532,20 @@ jpg file
 
 
 
+### /get_avatar_thumbnail
+
+**GET**
+
+**Authorization**
+
+
+
+#### Responses
+
+```json
+image/jpeg
+```
+
 
 
 ### /remove_gallery_image/{url}
@@ -557,16 +600,8 @@ jpg file
 {
     "tasks": [
         {
-            "taskid": "2fadc1a3-727b-4c74-8a12-591645d1f724",
-            "status": "SUCCESS"
-        },
-        {
             "taskid": "df812521-fb0f-4347-be72-f2d0771b1c2f",
             "status": "PENDING"
-        },
-        {
-            "taskid": "9d701a94-b4cf-4403-a5a3-aa3c3b234e54",
-            "status": "FAILED"
         },
         {
             "taskid": "2e6bf30f-6a0f-4e49-a674-70886b66f2b8",

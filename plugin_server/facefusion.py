@@ -1,6 +1,4 @@
 import time
-import requests
-
 from plugin_server.config import *
 from plugin_server.logger import server_logger
 from plugin_server.utils import *
@@ -115,7 +113,7 @@ def facefusion_video(task_id, source_image_path, video_path, output_path):
 
 		end_time = round(time.time() - start_time, 2)
 		server_logger.info(f"[FaceFusionVideo] Finish facefusion video process in {end_time} seconds.")
-		return True
+		return video_output_path
 
 	except Exception as e:
 		server_logger.exception(f"[Video generation exception] {e}")
