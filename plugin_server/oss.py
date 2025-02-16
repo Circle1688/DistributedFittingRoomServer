@@ -29,8 +29,8 @@ def upload_obj_oss(file_obj, upload_path):
         return False
 
 
-def delete_obj_oss(file_path):
-    result = bucket.delete_object(file_path)
+def batch_delete_obj_oss(files):
+    result = bucket.batch_delete_objects(files)
     if result.status == 200:
         server_logger.info("[OSS] Delete successfully.")
         return True
@@ -62,3 +62,8 @@ def get_etag(object_key):
     object_info = bucket.get_object_meta(object_key)
     oss_etag = object_info.etag.strip('"')  # 去除 ETag 的引号
     return oss_etag.lower()
+
+
+def get_last_modified(object_key):
+    object_info = bucket.get_object_meta(object_key)
+    return object_info.last_modified
