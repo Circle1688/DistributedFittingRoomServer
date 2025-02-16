@@ -1,9 +1,5 @@
-import os
 import time
-
-from fastapi import APIRouter, Depends, HTTPException, status
-
-from plugin_server.gallery_routes import get_avatar_filepath
+from fastapi import APIRouter, Depends, HTTPException
 from plugin_server.schemas import *
 from plugin_server.auth import get_current_user_id
 from plugin_server.database_func import get_db

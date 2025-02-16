@@ -1,4 +1,6 @@
 import shutil
+import time
+
 import requests
 from moviepy import VideoFileClip
 import psutil
@@ -6,7 +8,6 @@ from PIL import Image
 import os
 from io import BytesIO
 from hashlib import md5
-from plugin_server.config import TEMP_DIR
 from plugin_server.oss import *
 
 
@@ -53,7 +54,11 @@ def calculate_file_md5(file_path):
 
 
 def download_avatar(user_id):
-    avatar_path = f'{user_id}/avatar/avatar.png'
+    avatar_data = get_avatar_task(user_id)
+    if not avatar_data:
+        return None
+    avatar_path = avatar_data['avatar_path']
+
     temp_local_avatar_dir = os.path.join(TEMP_DIR, 'avatar')
     if not os.path.exists(temp_local_avatar_dir):
         os.mkdir(temp_local_avatar_dir)
@@ -61,7 +66,7 @@ def download_avatar(user_id):
     if not os.path.exists(temp_avatar_dir):
         os.mkdir(temp_avatar_dir)
 
-    local_avatar_file_path = os.path.join(temp_avatar_dir, "avatar.png")
+    local_avatar_file_path = os.path.join(temp_avatar_dir, os.path.basename(avatar_path))
     if os.path.exists(local_avatar_file_path):
         # 获取本地文件的 MD5
         local_md5 = calculate_file_md5(local_avatar_file_path)
@@ -72,10 +77,11 @@ def download_avatar(user_id):
             return local_avatar_file_path
         else:
             print("File is different from local file, start downloading...")
-            return download_file(get_full_url_oss(avatar_path), download_dir=temp_avatar_dir)
     else:
         print("The local file does not exist, start downloading...")
-        return download_file(get_full_url_oss(avatar_path), download_dir=temp_avatar_dir)
+
+    clear_folder(temp_avatar_dir)
+    return download_file(get_full_url_oss(avatar_path), download_dir=temp_avatar_dir)
 
 
 def clear_folder(directory):
@@ -162,8 +168,50 @@ def extract_video_cover(video_path):
     # 生成封面图的文件名
     output_image_path = os.path.join(dir_path, f"{name}_thumbnail.jpg")
 
+    # 获取视频的最后一帧时间
+    last_frame_time = clip.duration - 0.1  # 稍微提前一点，避免超出范围
+
     # 保存为图片
-    clip.save_frame(output_image_path, t=0)
+    clip.save_frame(output_image_path, t=last_frame_time)
 
     # 关闭视频文件
     clip.close()
+
+
+def get_avatar_task(user_id):
+    prefix = f'{user_id}/avatar/avatar'
+    avatar_path = None
+    thumbnail_avatar_path = None
+    for file in get_file_key_oss(prefix):
+        if '_thumbnail.jpg' in file:
+            thumbnail_avatar_path = file
+        else:
+            avatar_path = file
+    if avatar_path and thumbnail_avatar_path:
+        return {"avatar_path": avatar_path,
+                "thumbnail_avatar_path": thumbnail_avatar_path}
+    else:
+        return None
+
+
+def suggest_file_name(user_id, file_name):
+    return f'{user_id}/gallery/{file_name}'
+
+
+def upload_avatar_task(user_id, file_obj):
+    prefix = f'{user_id}/avatar/avatar'
+    # 清空目录
+    if not delete_obj_prefix_oss(prefix):
+        return None
+
+    avatar_path = f'{prefix}_{int(time.time()*1000)}.png'
+    thumbnail_avatar_path = f'{prefix}_{int(time.time()*1000)}_thumbnail.jpg'
+
+    # 生成缩略图
+    thumbnail_obj = compress_image_bytes(file_obj, 100, 200)
+
+    if upload_obj_oss(file_obj, avatar_path) and upload_obj_oss(thumbnail_obj, thumbnail_avatar_path):
+        return {"avatar_url": get_full_url_oss(avatar_path),
+                "avatar_thumbnail_url": get_full_url_oss(thumbnail_avatar_path)}
+    else:
+        return None
