@@ -55,3 +55,10 @@ def get_files_oss(folder_prefix):
 
 def get_full_url_oss(filename):
     return CDN + '/' + filename
+
+
+def get_etag(object_key):
+    # 获取 OSS 对象的 ETag (通常是文件的 MD5)
+    object_info = bucket.get_object_meta(object_key)
+    oss_etag = object_info.etag.strip('"')  # 去除 ETag 的引号
+    return oss_etag.lower()

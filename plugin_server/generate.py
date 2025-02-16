@@ -11,7 +11,6 @@ from plugin_server.upscale import upscale_process
 
 from plugin_server.utils import *
 
-
 # 创建临时文件夹
 if not os.path.exists(TEMP_DIR):
     os.mkdir(TEMP_DIR)
@@ -19,6 +18,10 @@ if not os.path.exists(TEMP_DIR):
 TEMP_OUTPUT_DIR = os.path.join(TEMP_DIR, 'output')
 if not os.path.exists(TEMP_OUTPUT_DIR):
     os.mkdir(TEMP_OUTPUT_DIR)
+
+TEMP_DOWNLOAD_DIR = os.path.join(TEMP_DIR, 'download')
+if not os.path.exists(TEMP_DOWNLOAD_DIR):
+    os.mkdir(TEMP_DOWNLOAD_DIR)
 
 
 def upload_files_oss(folder, user_id):
@@ -67,7 +70,7 @@ def generate_process(task_id, args):
     if task_type == "upscale":
         video_url = args["data"]["video_url"]
         # 下载视频
-        input_path = download_file(video_url)
+        input_path = download_file(video_url, download_dir=TEMP_DOWNLOAD_DIR)
 
         video_output_path = os.path.join(output_path, f'{task_id}_upscale.mp4')
 
@@ -78,10 +81,8 @@ def generate_process(task_id, args):
             result = upload_files_oss(output_path, user_id)
 
     else:
-        # 获取头像url
-        avatar_url = get_avatar_filepath(user_id)
         # 下载头像
-        source_image_path = download_file(avatar_url)
+        source_image_path = download_avatar(user_id)
 
         # 头像获取成功
         if source_image_path:
@@ -94,7 +95,8 @@ def generate_process(task_id, args):
             if task_type == "image":
                 server_logger.info("FaceFusion image...")
                 # facefusion图像
-                if facefusion_image(task_id, source_image_path, images_folder, output_path, request_data['image_options']):
+                if facefusion_image(task_id, source_image_path, images_folder, output_path,
+                                    request_data['image_options']):
                     # 上传到oss
                     result = upload_files_oss(output_path, user_id)
 
@@ -105,7 +107,8 @@ def generate_process(task_id, args):
 
                 server_logger.info("Pre swap face...")
                 # 首次换脸
-                first_result, image_output_path = facefusion_image_internal(source_image_path, target_image_path, image_output_path)
+                first_result, image_output_path = facefusion_image_internal(source_image_path, target_image_path,
+                                                                            image_output_path)
                 # 首次换脸成功
                 if first_result:
                     server_logger.info("PixVerse...")

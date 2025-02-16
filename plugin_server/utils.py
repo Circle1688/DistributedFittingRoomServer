@@ -5,7 +5,9 @@ import psutil
 from PIL import Image
 import os
 from io import BytesIO
+from hashlib import md5
 from plugin_server.config import TEMP_DIR
+from plugin_server.oss import *
 
 
 def find_png_files(directory):
@@ -25,13 +27,13 @@ def get_files(directory):
     return file_list
 
 
-def download_file(url):
+def download_file(url, download_dir=TEMP_DIR):
     filename = os.path.basename(url)
 
     response = requests.get(url)
 
     if response.status_code == 200:
-        file_path = os.path.join(TEMP_DIR, filename)
+        file_path = os.path.join(download_dir, filename)
         with open(file_path, "wb") as file:
             file.write(response.content)
         print("Download successfully")
@@ -39,6 +41,41 @@ def download_file(url):
     else:
         print("Download failed")
         return None
+
+
+def calculate_file_md5(file_path):
+    """计算本地文件的 MD5 值"""
+    hash_md5 = md5()
+    with open(file_path, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
+
+
+def download_avatar(user_id):
+    avatar_path = f'{user_id}/avatar/avatar.png'
+    temp_local_avatar_dir = os.path.join(TEMP_DIR, 'avatar')
+    if not os.path.exists(temp_local_avatar_dir):
+        os.mkdir(temp_local_avatar_dir)
+    temp_avatar_dir = os.path.join(temp_local_avatar_dir, str(user_id))
+    if not os.path.exists(temp_avatar_dir):
+        os.mkdir(temp_avatar_dir)
+
+    local_avatar_file_path = os.path.join(temp_avatar_dir, "avatar.png")
+    if os.path.exists(local_avatar_file_path):
+        # 获取本地文件的 MD5
+        local_md5 = calculate_file_md5(local_avatar_file_path)
+        oss_etag = get_etag(avatar_path)
+
+        if local_md5 == oss_etag:
+            print("File is the same as the local file and does not need to be downloaded.")
+            return local_avatar_file_path
+        else:
+            print("File is different from local file, start downloading...")
+            return download_file(get_full_url_oss(avatar_path), download_dir=temp_avatar_dir)
+    else:
+        print("The local file does not exist, start downloading...")
+        return download_file(get_full_url_oss(avatar_path), download_dir=temp_avatar_dir)
 
 
 def clear_folder(directory):
