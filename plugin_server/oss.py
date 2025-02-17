@@ -43,14 +43,12 @@ def delete_obj_prefix_oss(prefix):
     files = []
     for obj in oss2.ObjectIteratorV2(bucket, prefix=prefix):
         files.append(obj.key)
-
-    result = bucket.batch_delete_objects(files)
-    if result.status == 200:
-        server_logger.info("[OSS] Delete successfully.")
-        return True
-    else:
-        server_logger.info("[OSS] Delete failed.")
-        return False
+    try:
+        result = bucket.batch_delete_objects(files)
+        if result.status == 200:
+            server_logger.info("[OSS] Delete successfully.")
+    except Exception as e:
+        server_logger.info(f"[OSS] Delete failed. Error: {e}")
 
 
 def get_file_key_oss(prefix):
