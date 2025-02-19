@@ -5,7 +5,6 @@ config.read('config.ini')
 
 TEMP_DIR = './.temp'
 
-USER_DATA_DIR = config['default']['user_data_dir']
 SERVER_HOST = config['default']['server_host']
 REDIS_HOST = config['default']['redis_host']
 
