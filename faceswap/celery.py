@@ -1,9 +1,10 @@
 from celery import Celery
 from kombu import Queue
+from plugin_server.config import REDIS_HOST
 
 app = Celery('faceswap',
-             broker='redis://localhost',
-             backend='redis://localhost',
+             broker=f'redis://{REDIS_HOST}',
+             backend=f'redis://{REDIS_HOST}',
              include=['faceswap.tasks'])
 
 # 配置队列
