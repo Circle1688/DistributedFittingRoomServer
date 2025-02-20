@@ -3,8 +3,6 @@ import configparser
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-PROXY = {'http': 'http://127.0.0.1:7890', 'https': 'http://127.0.0.1:7890'}
-
 TEMP_DIR = './.temp'
 
 SERVER_HOST = config['default']['server_host']
