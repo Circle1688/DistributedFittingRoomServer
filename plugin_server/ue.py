@@ -9,7 +9,7 @@ from plugin_server.utils import *
 
 def start_ue():
     params = [UE_BAT_PATH, '-ForceRes', f"-ResX={str(UE_RES_X)}", f"-ResY={str(UE_RES_Y)}"]
-
+    
     if UE_HEADLESS.lower() == 'true':
         params.append('-RenderOffScreen')
 
@@ -30,6 +30,7 @@ def ue_process(ue_json_data):
         try:
             # 先试着连接到UE
             server_logger.info("[UE] Connect to ue...")
+
             response = requests.post(UE_URL, json=ue_json_data, timeout=2.0)
             break
         except requests.exceptions.Timeout:

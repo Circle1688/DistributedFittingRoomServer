@@ -31,7 +31,7 @@ def get_files(directory):
 def download_file(url, download_dir=TEMP_DIR):
     filename = os.path.basename(url)
 
-    response = requests.get(url)
+    response = requests.get(url, proxies=proxy)
 
     if response.status_code == 200:
         file_path = os.path.join(download_dir, filename)

@@ -117,7 +117,7 @@ def download_video(url, save_path):
 
 def pixverse_process(image_path, video_path, args):
     start_time = time.time()
-    if args["pixverse"]:
+    if args["video_live"]:
         # 上传图片
         result, img_id = pixverse_upload_image(image_path)
 
