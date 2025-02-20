@@ -30,17 +30,20 @@ def get_files(directory):
 
 def download_file(url, download_dir=TEMP_DIR):
     filename = os.path.basename(url)
+    try:
+        response = requests.get(url, proxies=PROXY)
 
-    response = requests.get(url, proxies=proxy)
-
-    if response.status_code == 200:
-        file_path = os.path.join(download_dir, filename)
-        with open(file_path, "wb") as file:
-            file.write(response.content)
-        print("Download successfully")
-        return file_path
-    else:
-        print("Download failed")
+        if response.status_code == 200:
+            file_path = os.path.join(download_dir, filename)
+            with open(file_path, "wb") as file:
+                file.write(response.content)
+            print("Download successfully")
+            return file_path
+        else:
+            print("Download failed")
+            return None
+    except Exception as e:
+        print(f"Download error: {e}")
         return None
 
 
