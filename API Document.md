@@ -118,7 +118,10 @@ Please save the token for authorization access.
 #### Responses
 
 ```json
-image/jpeg
+{
+    "avatar_url": "https://media.kungcorp.io/33/avatar/avatar_1738860389536.png",
+    "avatar_thumbnail_url": "https://media.kungcorp.io/33/avatar/avatar_1738860389536_thumbnail.jpg"
+}
 ```
 
 
@@ -143,7 +146,8 @@ Image file
 
 ```json
 {
-   "message": "string"
+    "avatar_url": "https://media.kungcorp.io/33/avatar/avatar_1738860389536.png",
+    "avatar_thumbnail_url": "https://media.kungcorp.io/33/avatar/avatar_1738860389536_thumbnail.jpg"
 }
 ```
 
@@ -231,44 +235,36 @@ body_dimensions is a list, you need to add the key-value pairs.
       "pose":"I-Pose",
       "body_dimensions": [
               {"key": "b_{main}_muscular", "value": 0.5},
-              {"key": "b_{main}_overweight", "value": 1},
-              {"key": "b_{main}_skinny", "value": 0},
-              {"key": "b_{Head}_Neck Thickness", "value": 0},
-              {"key": "b_{Head}_Neck Length", "value": 1},
-              {"key": "b_{Torso}_Shoulder Width", "value": 0.3},
-              {"key": "b_{Torso}_Chest Width", "value": 0},
-              {"key": "b_{Torso}_Breast Size", "value": 2},
-              {"key": "b_{Torso}_Waist Thickness", "value": 0},
-              {"key": "b_{Torso}_Belly Size", "value": 2},
-              {"key": "b_{Torso}_Hips Size", "value": 0},
-              {"key": "b_{Arms}_Upper Arm Length", "value": 0},
-              {"key": "b_{Arms}_Upper Arm Thickness", "value": 0},
-              {"key": "b_{Arms}_Forearm Length", "value": 1},
-              {"key": "b_{Arms}_Forearm Thickness", "value": 0},
-              {"key": "b_{Legs}_Thigh Length", "value": 0},
-              {"key": "b_{Legs}_Thigh Thickness", "value": 1},
-              {"key": "b_{Legs}_Shin Length", "value": 0},
-              {"key": "b_{Legs}_Shin Thickness", "value": 0},
-              {"key": "b_{Arms}_Hand Width", "value": 0},
-              {"key": "b_{Arms}_Hand Thickness", "value": 0},
-              {"key": "b_{Legs}_Foot Length", "value": 1}
+              {"key": "b_{main}_overweight", "value": 0.5}
           ],
           "body_dimension_lengths": [
-              {"key": "spine", "value": {"x":1.1, "y":1.2, "z":1.1}}
+              {"key": "spine", "value": {"x":1.05, "y":1.05, "z":1.05}},
+              {"key": "thigh_R", "value": {"x":1.0, "y":1.05, "z":1.0}},
+              {"key": "thigh_L", "value": {"x":1.0, "y":1.05, "z":1.0}},
+              {"key": "shin_R", "value": {"x":1.0, "y":1.05, "z":1.0}},
+              {"key": "shin_L", "value": {"x":1.0, "y":1.05, "z":1.0}},
+              {"key": "shoulder_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "shoulder_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "upper_arm_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "upper_arm_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "forearm_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "forearm_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "neck", "value": {"x":1.0, "y":1.0, "z":1.0}}
+            //   {"key": "head", "value": {"x":1.6, "y":1.6, "z":1.6}}
           ],
-          "hairstyle": "10",
+          "hairstyle": "30",
           "hair_color": "6B4F30FF",
-          "camera_view": "Front",
+          "camera_view": "front",
           "view_mode": 0,
-          "expression": "Kiss",
+          "expression": "Smile",
           "background_color_hex": "FFE4DBFF",
           "gender": "Female"
       },
       "apparel_details": {
-          "brand": "brand",
-          "item_id": "LongSleeve",
-          "color": "Black",
-          "size": "M",
+          "brand": "gymshark",
+          "item_id": "Hoodie",
+          "color": "Red",
+          "size": "L",
           "size2": "L"
       },
       "image_options":{
@@ -313,44 +309,36 @@ body_dimensions is a list, you need to add the key-value pairs.
       "pose":"I-Pose",
       "body_dimensions": [
               {"key": "b_{main}_muscular", "value": 0.5},
-              {"key": "b_{main}_overweight", "value": 1},
-              {"key": "b_{main}_skinny", "value": 0},
-              {"key": "b_{Head}_Neck Thickness", "value": 0},
-              {"key": "b_{Head}_Neck Length", "value": 1},
-              {"key": "b_{Torso}_Shoulder Width", "value": 0.3},
-              {"key": "b_{Torso}_Chest Width", "value": 0},
-              {"key": "b_{Torso}_Breast Size", "value": 2},
-              {"key": "b_{Torso}_Waist Thickness", "value": 0},
-              {"key": "b_{Torso}_Belly Size", "value": 2},
-              {"key": "b_{Torso}_Hips Size", "value": 0},
-              {"key": "b_{Arms}_Upper Arm Length", "value": 0},
-              {"key": "b_{Arms}_Upper Arm Thickness", "value": 0},
-              {"key": "b_{Arms}_Forearm Length", "value": 1},
-              {"key": "b_{Arms}_Forearm Thickness", "value": 0},
-              {"key": "b_{Legs}_Thigh Length", "value": 0},
-              {"key": "b_{Legs}_Thigh Thickness", "value": 1},
-              {"key": "b_{Legs}_Shin Length", "value": 0},
-              {"key": "b_{Legs}_Shin Thickness", "value": 0},
-              {"key": "b_{Arms}_Hand Width", "value": 0},
-              {"key": "b_{Arms}_Hand Thickness", "value": 0},
-              {"key": "b_{Legs}_Foot Length", "value": 1}
+              {"key": "b_{main}_overweight", "value": 0.5}
           ],
           "body_dimension_lengths": [
-              {"key": "spine", "value": {"x":1.1, "y":1.2, "z":1.1}}
+              {"key": "spine", "value": {"x":1.05, "y":1.05, "z":1.05}},
+              {"key": "thigh_R", "value": {"x":1.0, "y":1.05, "z":1.0}},
+              {"key": "thigh_L", "value": {"x":1.0, "y":1.05, "z":1.0}},
+              {"key": "shin_R", "value": {"x":1.0, "y":1.05, "z":1.0}},
+              {"key": "shin_L", "value": {"x":1.0, "y":1.05, "z":1.0}},
+              {"key": "shoulder_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "shoulder_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "upper_arm_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "upper_arm_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "forearm_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "forearm_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
+              {"key": "neck", "value": {"x":1.0, "y":1.0, "z":1.0}}
+            //   {"key": "head", "value": {"x":1.6, "y":1.6, "z":1.6}}
           ],
-          "hairstyle": "10",
+          "hairstyle": "30",
           "hair_color": "6B4F30FF",
-          "camera_view": "Front",
+          "camera_view": "front",
           "view_mode": 0,
-          "expression": "Kiss",
+          "expression": "Smile",
           "background_color_hex": "FFE4DBFF",
           "gender": "Female"
       },
       "apparel_details": {
-          "brand": "brand",
-          "item_id": "LongSleeve",
-          "color": "Black",
-          "size": "M",
+          "brand": "gymshark",
+          "item_id": "Hoodie",
+          "color": "Red",
+          "size": "L",
           "size2": "L"
       },
       "video_options":{
@@ -463,126 +451,45 @@ position = n
 
 ```json
 {
-   "gallery_urls": [
-       {
-           "type":"image",
-           "url":"1738860389536"
-       },
-       {
-           "type":"video",
-           "url":"1738860592428"
-       }
-   ]
+    "gallery_urls": [
+        {
+            "source_url": "https://media.kungcorp.io/33/gallery/3aa38a43-631e-44f4-ae1a-de16d9843cad_upscale.mp4",
+            "thumbnail_url": "https://media.kungcorp.io/33/gallery/3aa38a43-631e-44f4-ae1a-de16d9843cad_upscale_thumbnail.jpg",
+            "last_modified": 1739678557
+        },
+        {
+            "source_url": "https://media.kungcorp.io/33/gallery/fa398b2c-d6c4-4e81-b58e-8585b37cbebc.mp4",
+            "thumbnail_url": "https://media.kungcorp.io/33/gallery/fa398b2c-d6c4-4e81-b58e-8585b37cbebc_thumbnail.jpg",
+            "last_modified": 1739678440
+        },
+        {
+            "source_url": "https://media.kungcorp.io/33/gallery/fa398b2c-d6c4-4e81-b58e-8585b37cbebc.jpg",
+            "thumbnail_url": "https://media.kungcorp.io/33/gallery/fa398b2c-d6c4-4e81-b58e-8585b37cbebc_thumbnail.jpg",
+            "last_modified": 1739678350
+        }
+    ]
 }
 ```
 
 
 
-### /get_gallery_image/{url}
-
-**GET**
-
-**Authorization**
-
-ex：/get_gallery_image/1736386913456-1
-
-
-
-#### Responses
-
-```json
-jpg file
-```
-
-
-
-### /get_gallery_video/{url}
-
-**GET**
-
-**Authorization**
-
-ex：/get_gallery_video/1738860592428
-
-
-
-#### Responses
-
-```json
-mp4 file
-```
-
-
-
-### /get_thumbnail/{url}
-
-**GET**
-
-**Authorization**
-
-ex：/get_thumbnail/1736386913456-1
-
-
-
-#### Responses
-
-```json
-jpg file
-```
-
-
-
-### /get_avatar_thumbnail
-
-**GET**
-
-**Authorization**
-
-
-
-#### Responses
-
-```json
-image/jpeg
-```
-
-
-
-### /remove_gallery_image/{url}
+### /remove_gallery_file/{file_name}
 
 **DELETE**
 
 **Authorization**
 
-
+ 
 
 #### Responses
 
-```json
+```
 {
    "message": "string"
 }
 ```
 
-
-
-### /remove_gallery_video/{url}
-
-**DELETE**
-
-**Authorization**
-
-
-
-#### Responses
-
-```json
-{
-   "message": "string"
-}
-```
-
-
+ 
 
 ## Task
 

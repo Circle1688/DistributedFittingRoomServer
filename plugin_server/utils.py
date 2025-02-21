@@ -57,34 +57,38 @@ def calculate_file_md5(file_path):
 
 
 def download_avatar(user_id):
-    avatar_data = get_avatar_task(user_id)
-    if not avatar_data:
-        return None
-    avatar_path = avatar_data['avatar_path']
+    try:
+        avatar_data = get_avatar_task(user_id)
+        if not avatar_data:
+            return None
+        avatar_path = avatar_data['avatar_path']
 
-    temp_local_avatar_dir = os.path.join(TEMP_DIR, 'avatar')
-    if not os.path.exists(temp_local_avatar_dir):
-        os.mkdir(temp_local_avatar_dir)
-    temp_avatar_dir = os.path.join(temp_local_avatar_dir, str(user_id))
-    if not os.path.exists(temp_avatar_dir):
-        os.mkdir(temp_avatar_dir)
+        temp_local_avatar_dir = os.path.join(TEMP_DIR, 'avatar')
+        if not os.path.exists(temp_local_avatar_dir):
+            os.mkdir(temp_local_avatar_dir)
+        temp_avatar_dir = os.path.join(temp_local_avatar_dir, str(user_id))
+        if not os.path.exists(temp_avatar_dir):
+            os.mkdir(temp_avatar_dir)
 
-    local_avatar_file_path = os.path.join(temp_avatar_dir, os.path.basename(avatar_path))
-    if os.path.exists(local_avatar_file_path):
-        # 获取本地文件的 MD5
-        local_md5 = calculate_file_md5(local_avatar_file_path)
-        oss_etag = get_etag(avatar_path)
+        local_avatar_file_path = os.path.join(temp_avatar_dir, os.path.basename(avatar_path))
+        if os.path.exists(local_avatar_file_path):
+            # 获取本地文件的 MD5
+            local_md5 = calculate_file_md5(local_avatar_file_path)
+            oss_etag = get_etag(avatar_path)
 
-        if local_md5 == oss_etag:
-            print("File is the same as the local file and does not need to be downloaded.")
-            return local_avatar_file_path
+            if local_md5 == oss_etag:
+                print("File is the same as the local file and does not need to be downloaded.")
+                return local_avatar_file_path
+            else:
+                print("File is different from local file, start downloading...")
         else:
-            print("File is different from local file, start downloading...")
-    else:
-        print("The local file does not exist, start downloading...")
+            print("The local file does not exist, start downloading...")
 
-    clear_folder(temp_avatar_dir)
-    return download_file(get_full_url_oss(avatar_path), download_dir=temp_avatar_dir)
+        clear_folder(temp_avatar_dir)
+        return download_file(get_full_url_oss(avatar_path), download_dir=temp_avatar_dir)
+    except Exception as e:
+        print(f"Error when download avatar: {e}")
+        return None
 
 
 def clear_folder(directory):
@@ -182,18 +186,22 @@ def extract_video_cover(video_path):
 
 
 def get_avatar_task(user_id):
-    prefix = f'{user_id}/avatar/avatar'
-    avatar_path = None
-    thumbnail_avatar_path = None
-    for file in get_file_key_oss(prefix):
-        if '_thumbnail.jpg' in file:
-            thumbnail_avatar_path = file
+    try:
+        prefix = f'{user_id}/avatar/avatar'
+        avatar_path = None
+        thumbnail_avatar_path = None
+        for file in get_file_key_oss(prefix):
+            if '_thumbnail.jpg' in file:
+                thumbnail_avatar_path = file
+            else:
+                avatar_path = file
+        if avatar_path and thumbnail_avatar_path:
+            return {"avatar_path": avatar_path,
+                    "thumbnail_avatar_path": thumbnail_avatar_path}
         else:
-            avatar_path = file
-    if avatar_path and thumbnail_avatar_path:
-        return {"avatar_path": avatar_path,
-                "thumbnail_avatar_path": thumbnail_avatar_path}
-    else:
+            return None
+    except Exception as e:
+        print(f"Error when get avatar: {e}")
         return None
 
 
@@ -202,18 +210,23 @@ def suggest_file_name(user_id, file_name):
 
 
 def upload_avatar_task(user_id, file_obj):
-    prefix = f'{user_id}/avatar/avatar'
-    # 清空目录
-    delete_obj_prefix_oss(prefix)
+    try:
+        prefix = f'{user_id}/avatar/avatar'
+        # 清空目录
+        delete_obj_prefix_oss(prefix)
 
-    avatar_path = f'{prefix}_{int(time.time()*1000)}.png'
-    thumbnail_avatar_path = f'{prefix}_{int(time.time()*1000)}_thumbnail.jpg'
+        avatar_path = f'{prefix}_{int(time.time()*1000)}.png'
+        thumbnail_avatar_path = f'{prefix}_{int(time.time()*1000)}_thumbnail.jpg'
 
-    # 生成缩略图
-    thumbnail_obj = compress_image_bytes(file_obj, 100, 200)
+        # 生成缩略图
+        thumbnail_obj = compress_image_bytes(file_obj, 100, 200)
 
-    if upload_obj_oss(file_obj, avatar_path) and upload_obj_oss(thumbnail_obj, thumbnail_avatar_path):
-        return {"avatar_url": get_full_url_oss(avatar_path),
-                "avatar_thumbnail_url": get_full_url_oss(thumbnail_avatar_path)}
-    else:
+        if upload_obj_oss(file_obj, avatar_path) and upload_obj_oss(thumbnail_obj, thumbnail_avatar_path):
+            return {"avatar_url": get_full_url_oss(avatar_path),
+                    "avatar_thumbnail_url": get_full_url_oss(thumbnail_avatar_path)}
+        else:
+            return None
+
+    except Exception as e:
+        print(f"Error when upload avatar: {e}")
         return None
