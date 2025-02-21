@@ -25,3 +25,5 @@ END_POINT = config['oss']['end_point']
 REGION = config['oss']['region']
 BUCKET_NAME = config['oss']['bucket_name']
 CDN = config['oss']['cdn']
+
+SYSTEM_MANAGER_PATH = config['default']['system_manager_path']
