@@ -118,26 +118,31 @@ def download_video(url, save_path):
 def pixverse_process(image_path, video_path, args):
     start_time = time.time()
     if args["video_live"]:
-        # 上传图片
-        result, img_id = pixverse_upload_image(image_path)
+        try:
+            # 上传图片
+            result, img_id = pixverse_upload_image(image_path)
 
-        # 上传成功
-        if result:
-            # 生成视频
-            video_id = pixverse_image_to_video(img_id, args)
+            # 上传成功
+            if result:
+                # 生成视频
+                video_id = pixverse_image_to_video(img_id, args)
 
-            # 获取生成结果
-            generate_result, video_url = pixverse_get_result(video_id)
+                # 获取生成结果
+                generate_result, video_url = pixverse_get_result(video_id)
 
-            # 生成成功
-            if generate_result:
-                # 下载视频
-                if download_video(video_url, video_path):
-                    end_time = round(time.time() - start_time, 2)
-                    server_logger.info(f"[Pixverse] Finish Pixverse process in {end_time} seconds.")
-                    return True
+                # 生成成功
+                if generate_result:
+                    # 下载视频
+                    if download_video(video_url, video_path):
+                        end_time = round(time.time() - start_time, 2)
+                        server_logger.info(f"[Pixverse] Finish Pixverse process in {end_time} seconds.")
+                        return True
 
-        return False
+            return False
+        except Exception as e:
+            server_logger.info(f"[PixVerse] Error: {e}")
+            return False
+
     else:
         time.sleep(30)
         return True
