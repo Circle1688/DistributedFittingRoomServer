@@ -35,7 +35,8 @@ def update_task_status(task: TaskRequest, db: Session = Depends(get_db)):
 
 @router.get("/get_tasks")
 async def get_tasks(user_id: int = Depends(get_current_user_id), db: Session = Depends(get_db)):
-
+    db.query(TaskStorage).filter(or_(TaskStorage.status == "SUCCESS", TaskStorage.status == "FAILED")).delete()
+    db.commit()
     tasks = db.query(TaskStorage).filter(TaskStorage.user_id == user_id, or_(TaskStorage.status == "PENDING", TaskStorage.status == "STARTED")).all()
     if tasks:
         tasks_list = []
