@@ -40,7 +40,7 @@ def create_generate_task(request_data, user_id, task_type):
     else:
         priority = 10
 
-    result = generate_task.delay(args, queue="facefusion_queue", priority=priority)
+    result = generate_task.apply_async(args, priority=priority)
     return result.id
 
 

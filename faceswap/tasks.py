@@ -22,7 +22,7 @@ redis_client = redis.StrictRedis(host=REDIS_HOST, port=6379, db=0)
 #     redis_client.zrem("low_task_queue", task_id)
 #     return result
 
-@app.task()
+@app.task(queue="facefusion_queue")
 def generate_task(args):
     task_id = generate_task.request.id
     result = generate_process(task_id, args)
