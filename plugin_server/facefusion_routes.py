@@ -66,12 +66,12 @@ async def generate_status(task_id: str, user_id: int = Depends(get_current_user_
     result = AsyncResult(task_id, app=app)
     if result.ready():
         return {"status": "SUCCESS"}
+    elif result.state == "STARTED":
+        return {"status": result.state, "position": 0}
     else:
         # 获取任务在有序集合中的排名（从 0 开始）
         rank = redis_client.zrank("high_task_queue", task_id)
         if rank is None:
-            if result.state == "STARTED":
-                return {"status": result.state, "type": "vip", "position": 0}
 
             high_task_queue_length = redis_client.zcard("high_task_queue")
 
@@ -79,15 +79,9 @@ async def generate_status(task_id: str, user_id: int = Depends(get_current_user_
             if rank is None:
                 raise HTTPException(status_code=404, detail="Task not found in queue")
             else:
-                if result.state == "STARTED":
-                    if result.state == "STARTED":
-                        return {"status": result.state, "type": "normal", "position": 0}
-                else:
-                    if high_task_queue_length <= 1:
-                        position = rank
-                    else:
-                        position = high_task_queue_length + rank
-                    return {"status": result.state, "type": "normal", "position": position}
+                position = rank + 1
+                position += high_task_queue_length
+                return {"status": result.state, "type": "normal", "position": position}
         else:
-            position = rank
+            position = rank + 1
             return {"status": result.state, "type": "vip", "position": position}  # 排名从 1 开始
