@@ -34,7 +34,7 @@ def update_task_status(task: TaskRequest, db: Session = Depends(get_db)):
     db_task = db.query(TaskStorage).filter_by(user_id=task.user_id, task_id=task.task_id).first()
     if db_task:
         if task.status == "SUCCESS" or task.status == "FAILED":
-            db_task.delete()
+            db.delete(db_task)
         else:
             db_task.status = task.status
 
