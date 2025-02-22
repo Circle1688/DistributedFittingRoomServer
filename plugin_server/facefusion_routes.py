@@ -9,6 +9,9 @@ from sqlalchemy.orm import Session
 from faceswap.tasks import generate_task, redis_client
 from celery.result import AsyncResult
 
+from celery import current_app
+current_app.loader.import_default_modules()
+
 from plugin_server.task_routes import add_task
 
 router = APIRouter()
@@ -100,10 +103,9 @@ async def generate_status(task_id: str, user_id: int = Depends(get_current_user_
     if result.ready():
         return {"status": "SUCCESS"}
     else:
-        task_list = redis_client.lrange("facefusion_queue", 0, -1)
-        for task in task_list:
-            print(task.decode())
-
+        tasks = list(sorted(name for name in current_app.tasks
+                            if not name.startswith('celery.')))
+        print(tasks)
         return {"status": result.state, "position": 1}
         # # 获取队列中的所有任务
         # task_list = redis_client.lrange("facefusion_queue", 0, -1)
