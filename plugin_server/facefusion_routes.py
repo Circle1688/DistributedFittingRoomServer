@@ -21,7 +21,7 @@ def create_generate_task(request_data, user_id, task_type):
     args = {"data": data, "user_id": user_id, "task_type": task_type}
 
     timestamp = time.time()
-    if request_data.vip:
+    if data["task_options"]["vip"]:
         # 将任务发送到 Celery 队列
         result = high_priority_task.apply_async((args,), queue="facefusion_queue", priority=1)
         # 将 task_id 和当前时间戳添加到 Redis 有序集合
