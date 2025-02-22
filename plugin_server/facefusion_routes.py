@@ -100,13 +100,16 @@ async def generate_status(task_id: str, user_id: int = Depends(get_current_user_
     if result.ready():
         return {"status": "SUCCESS"}
     else:
-        # 获取队列中的所有任务
-        task_list = redis_client.lrange("facefusion_queue", 0, -1)
-        # 查找任务位置
-        for index, task in enumerate(task_list):
-            if task_id in task.decode('utf-8'):
-                position = index + 1
-                print(f"Task {task_id} is at position {position} in the queue.")
-                return {"status": result.state, "position": position}
+        rank = redis_client.zrank("facefusion_queue", task_id)
+        if rank:
+            return {"status": result.state, "position": rank}
+        # # 获取队列中的所有任务
+        # task_list = redis_client.lrange("facefusion_queue", 0, -1)
+        # # 查找任务位置
+        # for index, task in enumerate(task_list):
+        #     if task_id in task.decode('utf-8'):
+        #         position = index + 1
+        #         print(f"Task {task_id} is at position {position} in the queue.")
+        #         return {"status": result.state, "position": position}
 
         raise HTTPException(status_code=404, detail="Task not found in queue")
