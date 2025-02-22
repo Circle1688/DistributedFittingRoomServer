@@ -24,7 +24,7 @@ from plugin_server.config import REDIS_HOST
 #     'low_priority_task': {'queue': 'low_priority', 'routing_key': 'low_priority'},
 # }
 
-app = Celery()
+app = Celery('faceswap', include=['faceswap.tasks'])
 CONFIG = {
     # 'CELERY_ACKS_LATE': True, # 亲测不影响。
     'CELERYD_PREFETCH_MULTIPLIER': 1,  # 对于预取的，顺序无法变更，所以设置数量为1.注意0代表不限制
