@@ -12,14 +12,15 @@ redis_client = redis.StrictRedis(host=REDIS_HOST, port=6379, db=0)
 @app.task()
 def high_priority_task(args):
     task_id = high_priority_task.request.id
-    result = generate_process(task_id, args)
     redis_client.zrem("high_task_queue", task_id)
+    result = generate_process(task_id, args)
+
     return result
 
 
 @app.task()
 def low_priority_task(args):
     task_id = low_priority_task.request.id
-    result = generate_process(task_id, args)
     redis_client.zrem("low_task_queue", task_id)
+    result = generate_process(task_id, args)
     return result
