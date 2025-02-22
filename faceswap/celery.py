@@ -2,27 +2,6 @@ from celery import Celery
 from kombu import Queue, Exchange
 from plugin_server.config import REDIS_HOST
 
-# app = Celery('faceswap',
-#              broker=f'redis://{REDIS_HOST}',
-#              backend=f'redis://{REDIS_HOST}',
-#              include=['faceswap.tasks'])
-
-# # 配置队列
-# app.conf.task_queues = (
-#     Queue('high_priority', routing_key='high_priority'),
-#     Queue('low_priority', routing_key='low_priority'),
-# )
-#
-# # 默认队列
-# app.conf.task_default_queue = 'high_priority'
-# app.conf.task_default_exchange = 'tasks'
-# app.conf.task_default_routing_key = 'high_priority'
-#
-# # 路由规则
-# app.conf.task_routes = {
-#     'high_priority_task': {'queue': 'high_priority', 'routing_key': 'high_priority'},
-#     'low_priority_task': {'queue': 'low_priority', 'routing_key': 'low_priority'},
-# }
 
 app = Celery('faceswap', include=['faceswap.tasks'])
 CONFIG = {
@@ -38,7 +17,7 @@ CONFIG = {
     'CELERY_RESULT_BACKEND': f'redis://{REDIS_HOST}',
     # worker最大并发数
     'CELERYD_CONCURRENCY': 1,
-    # 如果不设置，默认是celery队列，此处使用默认的直连交换机，routing_key完全一致才会调度到celery_demo队列
+    # 如果不设置，默认是celery队列，此处使用默认的直连交换机，routing_key完全一致才会调度到facefusion_queue队列
     'CELERY_QUEUES': (
         Queue("facefusion_queue", Exchange("facefusion_queue"), routing_key="facefusion_queue"),
     )
@@ -51,6 +30,7 @@ app.conf.update(
     task_track_started=True,  # 启用任务开始状态跟踪
 )
 
+# 开启任务优先级
 app.conf.broker_transport_options = {
     'queue_order_strategy': 'priority',
 }
