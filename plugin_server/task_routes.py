@@ -22,11 +22,22 @@ def add_task(user_id, task_id, db: Session):
     db.refresh(new_task)
 
 
+def check_limit(user_id, request, db: Session):
+    data = request.dict()
+    limit = data["task_options"]["limit"]
+    tasks = db.query(TaskStorage).filter(TaskStorage.user_id == user_id, or_(TaskStorage.status == "PENDING", TaskStorage.status == "STARTED")).count()
+    return tasks < limit
+
+
 @router.post("/update_task_status")
 def update_task_status(task: TaskRequest, db: Session = Depends(get_db)):
     db_task = db.query(TaskStorage).filter_by(user_id=task.user_id, task_id=task.task_id).first()
     if db_task:
-        db_task.status = task.status
+        if task.status == "SUCCESS" or task.status == "FAILED":
+            db_task.delete()
+        else:
+            db_task.status = task.status
+
         db.commit()
         return {"message": f"Task {task.task_id} status updated to {task.status} for user {task.user_id}."}
     else:
@@ -35,8 +46,6 @@ def update_task_status(task: TaskRequest, db: Session = Depends(get_db)):
 
 @router.get("/get_tasks")
 async def get_tasks(user_id: int = Depends(get_current_user_id), db: Session = Depends(get_db)):
-    db.query(TaskStorage).filter(or_(TaskStorage.status == "SUCCESS", TaskStorage.status == "FAILED")).delete()
-    db.commit()
     tasks = db.query(TaskStorage).filter(TaskStorage.user_id == user_id, or_(TaskStorage.status == "PENDING", TaskStorage.status == "STARTED")).all()
     if tasks:
         tasks_list = []

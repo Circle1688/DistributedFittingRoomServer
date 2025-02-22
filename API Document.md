@@ -271,7 +271,10 @@ body_dimensions is a list, you need to add the key-value pairs.
           "quality": 100,
           "thumbnail_width": 128
       },
-      "vip":true
+      "task_options":{
+          "vip": true,
+          "limit": 5
+      }
 }
 ```
 
@@ -347,7 +350,10 @@ body_dimensions is a list, you need to add the key-value pairs.
           "prompt": "",
           "seed": 0
       },
-      "vip":true
+      "task_options":{
+          "vip": true,
+          "limit": 5
+      }
 }
 ```
 
@@ -376,7 +382,10 @@ body_dimensions is a list, you need to add the key-value pairs.
 ```json
 {
    "video_url": "string",
-   "vip":true
+   "task_options":{
+      "vip": true,
+      "limit": 5
+   }
 }
 ```
 

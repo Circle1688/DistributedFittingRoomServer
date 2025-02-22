@@ -1,5 +1,5 @@
 import time
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from plugin_server.schemas import *
 from plugin_server.auth import get_current_user_id
 from plugin_server.database_func import get_db
@@ -9,7 +9,7 @@ from faceswap.tasks import high_priority_task, low_priority_task, redis_client
 from celery.result import AsyncResult
 from faceswap.celery import app
 
-from plugin_server.task_routes import add_task
+from plugin_server.task_routes import add_task, check_limit
 
 router = APIRouter()
 
@@ -40,25 +40,34 @@ def create_generate_task(request_data, user_id, task_type):
 @router.post("/generate")
 async def generate(request: GenerateRequest, user_id: int = Depends(get_current_user_id),
                    db: Session = Depends(get_db)):
-    task_id = create_generate_task(request, user_id, task_type='image')
-    add_task(user_id, task_id, db)
-    return {"task_id": task_id}
+    if check_limit(user_id, request, db):
+        task_id = create_generate_task(request, user_id, task_type='image')
+        add_task(user_id, task_id, db)
+        return {"task_id": task_id}
+    raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                        detail="The number of user tasks exceeded the limit")
 
 
 @router.post("/generate_video")
 async def generate_video(request: VideoGenerateRequest, user_id: int = Depends(get_current_user_id),
                          db: Session = Depends(get_db)):
-    task_id = create_generate_task(request, user_id, task_type='video')
-    add_task(user_id, task_id, db)
-    return {"task_id": task_id}
+    if check_limit(user_id, request, db):
+        task_id = create_generate_task(request, user_id, task_type='video')
+        add_task(user_id, task_id, db)
+        return {"task_id": task_id}
+    raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                        detail="The number of user tasks exceeded the limit")
 
 
 @router.post("/upscale")
 async def upscale(request: UpscaleRequest, user_id: int = Depends(get_current_user_id),
                   db: Session = Depends(get_db)):
-    task_id = create_generate_task(request, user_id, task_type='upscale')
-    add_task(user_id, task_id, db)
-    return {"task_id": task_id}
+    if check_limit(user_id, request, db):
+        task_id = create_generate_task(request, user_id, task_type='upscale')
+        add_task(user_id, task_id, db)
+        return {"task_id": task_id}
+    raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                        detail="The number of user tasks exceeded the limit")
 
 
 @router.get("/generate/{task_id}")
@@ -72,16 +81,19 @@ async def generate_status(task_id: str, user_id: int = Depends(get_current_user_
         # 获取任务在有序集合中的排名（从 0 开始）
         rank = redis_client.zrank("high_task_queue", task_id)
         if rank is None:
-
+            # vip队列数量
             high_task_queue_length = redis_client.zcard("high_task_queue")
-
+            # 普通队列排名，从0开始排名
             rank = redis_client.zrank("low_task_queue", task_id)
             if rank is None:
-                raise HTTPException(status_code=404, detail="Task not found in queue")
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Task not found in queue")
             else:
+                # 加上vip数量
+                # 因为是从0开始，所以要+1
                 position = rank + 1
                 position += high_task_queue_length
                 return {"status": result.state, "type": "normal", "position": position}
         else:
+            # 因为是从0开始，所以要+1
             position = rank + 1
             return {"status": result.state, "type": "vip", "position": position}  # 排名从 1 开始

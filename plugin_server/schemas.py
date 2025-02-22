@@ -60,18 +60,23 @@ class VideoOptions(BaseModel):
 	seed: int
 
 
+class TaskOptions(BaseModel):
+	vip: bool
+	limit: int
+
+
 class GenerateRequest(BaseModel):
 	user_details: GenUserDetail
 	apparel_details: ApparelDetail
 	image_options: ImageOptions
-	vip: bool
+	task_options: TaskOptions
 
 
 class VideoGenerateRequest(BaseModel):
 	user_details: GenUserDetail
 	apparel_details: ApparelDetail
 	video_options: VideoOptions
-	vip: bool
+	task_options: TaskOptions
 
 
 class ClothesRequest(BaseModel):
@@ -88,4 +93,4 @@ class TaskRequest(BaseModel):
 
 class UpscaleRequest(BaseModel):
 	video_url: str
-	vip: bool
+	task_options: TaskOptions
