@@ -76,7 +76,11 @@ async def generate_status(task_id: str, user_id: int = Depends(get_current_user_
             if rank is None:
                 raise HTTPException(status_code=404, detail="Task not found in queue")
             else:
-                position = high_task_queue_length + rank
+                if result.state == "STARTED":
+                    position = 0
+                else:
+                    position = high_task_queue_length + rank
+
                 vip_type = "normal"
         else:
             position = rank
