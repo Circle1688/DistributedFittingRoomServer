@@ -25,3 +25,4 @@ session = Session()
 # 删除任务表中所有数据
 session.query(TaskStorage).delete()
 session.commit()
+session.close()
