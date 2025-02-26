@@ -60,7 +60,7 @@ def get_file_key_oss(prefix):
 
 def get_files_oss(folder_prefix):
     files = []
-    for obj in oss2.ObjectIteratorV2(bucket, prefix=folder_prefix, max_keys=10):
+    for obj in oss2.ObjectIteratorV2(bucket, prefix=folder_prefix):
         files.append((obj.key, obj.last_modified))
     # 按最后修改时间排序（从晚到早）
     files_sorted_by_time = sorted(files, key=lambda x: x[1], reverse=True)
