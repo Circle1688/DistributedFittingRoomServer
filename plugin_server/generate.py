@@ -45,9 +45,10 @@ def update_task_status(user_id, task_id, status):
 
 
 def generate_process(task_id, args):
+    user_id = args["user_id"]
+
     try:
         result = False
-        user_id = args["user_id"]
 
         # 更新任务状态
         update_task_status(user_id, task_id, "STARTED")
@@ -128,4 +129,5 @@ def generate_process(task_id, args):
         return result
     except Exception as e:
         server_logger.info(f"[Generate] Error: {e}")
+        update_task_status(user_id, task_id, "SUCCESS" if result else "FAILED")
         return False
