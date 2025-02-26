@@ -33,7 +33,8 @@ async def get_avatar(user_id: int = Depends(get_current_user_id)):
 
 @router.get('/get_gallery')
 async def get_gallery(user_id: int = Depends(get_current_user_id)):
-    files = get_files_oss(f'{user_id}/gallery/')
+    loop = asyncio.get_event_loop()
+    files = await loop.run_in_executor(None, get_files_oss, f'{user_id}/gallery/')
 
     gallery_urls = []
     for file, last_modified in files:
