@@ -46,10 +46,8 @@ def update_task_status(user_id, task_id, status):
 
 def generate_process(task_id, args):
     user_id = args["user_id"]
-
+    result = False
     try:
-        result = False
-
         # 更新任务状态
         update_task_status(user_id, task_id, "STARTED")
 

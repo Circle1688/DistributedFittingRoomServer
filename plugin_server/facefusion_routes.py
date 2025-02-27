@@ -74,7 +74,9 @@ async def upscale(request: UpscaleRequest, user_id: int = Depends(get_current_us
 async def generate_status(task_id: str, user_id: int = Depends(get_current_user_id)):
     result = AsyncResult(task_id, app=app)
     if result.ready():
-        return {"status": "SUCCESS"}
+        task_result = result.get()
+        return {"status": "SUCCESS" if task_result else "FAILED"}
+    
     elif result.state == "STARTED":
         return {"status": result.state, "position": 0}
     else:
