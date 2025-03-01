@@ -456,6 +456,10 @@ position = n
 
 
 
+/get_gallery?limit=10&cursor=1739678350
+
+
+
 #### Responses
 
 ```json
@@ -476,7 +480,12 @@ position = n
             "thumbnail_url": "https://media.kungcorp.io/33/gallery/fa398b2c-d6c4-4e81-b58e-8585b37cbebc_thumbnail.jpg",
             "last_modified": 1739678350
         }
-    ]
+    ],
+    "pagination": {
+        "limit": 10,
+        "next_cursor": 1739678350,
+        "has_next": true
+    }
 }
 ```
 

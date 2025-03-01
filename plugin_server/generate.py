@@ -18,10 +18,30 @@ if not os.path.exists(TEMP_DOWNLOAD_DIR):
     os.mkdir(TEMP_DOWNLOAD_DIR)
 
 
-def upload_files_oss(folder, user_id):
+def upload_files(folder, user_id):
+    files = []
     for file in get_files(folder):
-        if not upload_file_oss(file['filepath'], suggest_file_name(user_id, file['filename'])):
+        file_name = suggest_file_name(user_id, file['filename'])
+
+        if not upload_file_oss(file['filepath'], file_name):
+            # 如果上传失败
             return False
+        if not file_name.endswith("_thumbnail.jpg"):
+            file_url = get_full_url_oss(file_name)
+
+            url = f'http://{SERVER_HOST}:8000/upload_files'
+
+            data = {
+                'user_id': user_id,
+                'source_url': file_url,
+                'thumbnail_url': file_url.rsplit('.', 1)[0] + "_thumbnail.jpg"
+            }
+
+            response = requests.post(url, json=data)
+
+            if response.status_code != 200:
+                return False
+
     return True
 
 
@@ -72,7 +92,7 @@ def generate_process(task_id, args):
                 # 生成视频缩略图
                 extract_video_cover(video_output_path)
                 # 上传到oss
-                result = upload_files_oss(output_path, user_id)
+                result = upload_files(output_path, user_id)
 
         else:
             # 下载头像
@@ -92,7 +112,7 @@ def generate_process(task_id, args):
                     if facefusion_image(task_id, source_image_path, images_folder, output_path,
                                         request_data['image_options']):
                         # 上传到oss
-                        result = upload_files_oss(output_path, user_id)
+                        result = upload_files(output_path, user_id)
 
                 elif task_type == "video":
                     target_image_path = find_png_files(images_folder)[0]
@@ -117,7 +137,7 @@ def generate_process(task_id, args):
                                 # 生成视频缩略图
                                 extract_video_cover(video_output_path)
                                 # 上传到oss
-                                result = upload_files_oss(output_path, user_id)
+                                result = upload_files(output_path, user_id)
 
         end_time = round(time.time() - start_time, 2)
         server_logger.info(f"[{task_id}] Finish process in {end_time} seconds.")

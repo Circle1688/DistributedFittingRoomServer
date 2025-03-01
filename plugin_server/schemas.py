@@ -94,3 +94,9 @@ class TaskRequest(BaseModel):
 class UpscaleRequest(BaseModel):
 	video_url: str
 	task_options: TaskOptions
+
+
+class GalleryRequest(BaseModel):
+	user_id: int
+	source_url: str
+	thumbnail_url: str

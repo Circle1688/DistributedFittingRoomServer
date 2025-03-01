@@ -14,7 +14,6 @@ class User(Base):
 	user_info = relationship("UserInfo", uselist=False, back_populates="user", cascade="all, delete-orphan")
 	user_detail = relationship("UserDetailBase", uselist=False, back_populates="user", cascade="all, delete-orphan")
 	token = relationship("TokenStorage", uselist=False, back_populates="user", cascade="all, delete-orphan")
-	task = relationship("TaskStorage", uselist=False, back_populates="user", cascade="all, delete-orphan")
 
 
 class UserInfo(Base):
@@ -79,4 +78,12 @@ class TaskStorage(Base):
 	task_id = Column(String(50), nullable=False)
 	status = Column(String(50), nullable=False)
 
-	user = relationship("User", back_populates="task")
+
+class Gallery(Base):
+	__tablename__ = 'gallery'
+	id = Column(Integer, primary_key=True, index=True)
+	user_id = Column(Integer, ForeignKey('users.id'))
+
+	source_url = Column(String(255))
+	thumbnail_url = Column(String(255))
+	last_modified = Column(Integer)
