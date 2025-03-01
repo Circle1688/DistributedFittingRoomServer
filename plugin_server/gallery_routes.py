@@ -87,7 +87,7 @@ async def upload_files(request: GalleryRequest, db: Session = Depends(get_db)):
         user_id = request.user_id
         source_url = request.source_url
         thumbnail_url = request.thumbnail_url
-        last_modified = int(time.time() * 1000)
+        last_modified = int(time.time())
         new_gallery = Gallery(user_id=user_id, source_url=source_url, thumbnail_url=thumbnail_url, last_modified=last_modified)
         db.add(new_gallery)
         db.commit()
