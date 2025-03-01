@@ -37,10 +37,10 @@ def update_task_status(user_id, task_id, status):
     response = requests.post(url, json=data)
 
     if response.status_code == 200:
-        server_logger.info("[Update Task Status] Success")
+        print("[Update Task Status] Success")
         return True
 
-    server_logger.info("[Update Task Status] Failed")
+    print("[Update Task Status] Failed")
     return False
 
 

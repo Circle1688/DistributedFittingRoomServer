@@ -76,7 +76,7 @@ async def generate_status(task_id: str, user_id: int = Depends(get_current_user_
     if result.ready():
         task_result = result.get()
         return {"status": "SUCCESS" if task_result else "FAILED"}
-    
+
     elif result.state == "STARTED":
         return {"status": result.state, "position": 0}
     else:
