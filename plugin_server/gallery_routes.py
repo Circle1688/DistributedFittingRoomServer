@@ -45,7 +45,7 @@ async def get_gallery(limit: int, cursor: Optional[int] = None, user_id: int = D
 
     photos = db_gallery.order_by(desc(Gallery.last_modified)).limit(limit).all()
 
-    next_cursor = photos[-1].photo_id if photos else None
+    next_cursor = photos[-1].last_modified if photos else None
     has_next = len(photos) == limit
 
     ret_data = {
