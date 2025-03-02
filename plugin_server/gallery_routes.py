@@ -41,7 +41,7 @@ async def get_avatar(user_id: int = Depends(get_current_user_id)):
 async def get_gallery(limit: int, cursor: Optional[int] = None, user_id: int = Depends(get_current_user_id), db: Session = Depends(get_db)):
     db_gallery = db.query(Gallery).filter_by(user_id=user_id)
     if cursor:
-        db_gallery = db_gallery.filter(Gallery.last_modified > cursor)
+        db_gallery = db_gallery.filter(Gallery.last_modified < cursor)
 
     photos = db_gallery.order_by(desc(Gallery.last_modified)).limit(limit).all()
 
