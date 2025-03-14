@@ -230,28 +230,33 @@ body_dimensions is a list, you need to add the key-value pairs.
 ```json
 {
   	"user_details": {
-      "face_shape": "long",
-      "skin_tone": 2,
-      "pose":"I-Pose",
-      "body_dimensions": [
-              {"key": "b_{main}_muscular", "value": 0.5},
-              {"key": "b_{main}_overweight", "value": 0.5}
-          ],
-          "body_dimension_lengths": [
-              {"key": "spine", "value": {"x":1.05, "y":1.05, "z":1.05}},
-              {"key": "thigh_R", "value": {"x":1.0, "y":1.05, "z":1.0}},
-              {"key": "thigh_L", "value": {"x":1.0, "y":1.05, "z":1.0}},
-              {"key": "shin_R", "value": {"x":1.0, "y":1.05, "z":1.0}},
-              {"key": "shin_L", "value": {"x":1.0, "y":1.05, "z":1.0}},
-              {"key": "shoulder_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "shoulder_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "upper_arm_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "upper_arm_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "forearm_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "forearm_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "neck", "value": {"x":1.0, "y":1.0, "z":1.0}}
-            //   {"key": "head", "value": {"x":1.6, "y":1.6, "z":1.6}}
-          ],
+          "face_shape": "long",
+          "skin_tone": 2,
+          "pose":"I-Pose",
+          "real_world_measurements": {
+                "Height": 180,
+                "Thigh Length": 45.84773,
+                "Calf Length": 46.71822,
+                "Feet Length": 24.95818,
+                "Neck Length": 11.30822,
+                "Shoulder Width": 43.42514,
+                "Upper Arm Length": 25.20014,
+                "Forearm Length": 24.77694,
+                "Hand Length": 18.56700,
+                "Muscle": 0.25,
+                "Body Fat": 0.20,
+                "Neck Thickness": 32.21194,
+                "Bust": 96.75247,
+                "Cup": 15.09754,
+                "Waist": 69.90949,
+                "Belly": 80.75730,
+                "Hips": 102.57145,
+                "Thigh Size": 55.89947,
+                "Calf Size": 36.81380,
+                "Upper Arm Size": 25.16563,
+                "Forearm Size": 22.76084,
+                "Hand Size": 20.51066
+          },
           "hairstyle": "30",
           "hair_color": "6B4F30FF",
           "camera_view": "front",
@@ -307,28 +312,33 @@ body_dimensions is a list, you need to add the key-value pairs.
 ```json
 {
   	"user_details": {
-      "face_shape": "long",
-      "skin_tone": 2,
-      "pose":"I-Pose",
-      "body_dimensions": [
-              {"key": "b_{main}_muscular", "value": 0.5},
-              {"key": "b_{main}_overweight", "value": 0.5}
-          ],
-          "body_dimension_lengths": [
-              {"key": "spine", "value": {"x":1.05, "y":1.05, "z":1.05}},
-              {"key": "thigh_R", "value": {"x":1.0, "y":1.05, "z":1.0}},
-              {"key": "thigh_L", "value": {"x":1.0, "y":1.05, "z":1.0}},
-              {"key": "shin_R", "value": {"x":1.0, "y":1.05, "z":1.0}},
-              {"key": "shin_L", "value": {"x":1.0, "y":1.05, "z":1.0}},
-              {"key": "shoulder_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "shoulder_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "upper_arm_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "upper_arm_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "forearm_R", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "forearm_L", "value": {"x":1.0, "y":1.0, "z":1.0}},
-              {"key": "neck", "value": {"x":1.0, "y":1.0, "z":1.0}}
-            //   {"key": "head", "value": {"x":1.6, "y":1.6, "z":1.6}}
-          ],
+          "face_shape": "long",
+          "skin_tone": 2,
+          "pose":"I-Pose",
+          "real_world_measurements": {
+                "Height": 180,
+                "Thigh Length": 45.84773,
+                "Calf Length": 46.71822,
+                "Feet Length": 24.95818,
+                "Neck Length": 11.30822,
+                "Shoulder Width": 43.42514,
+                "Upper Arm Length": 25.20014,
+                "Forearm Length": 24.77694,
+                "Hand Length": 18.56700,
+                "Muscle": 0.25,
+                "Body Fat": 0.20,
+                "Neck Thickness": 32.21194,
+                "Bust": 96.75247,
+                "Cup": 15.09754,
+                "Waist": 69.90949,
+                "Belly": 80.75730,
+                "Hips": 102.57145,
+                "Thigh Size": 55.89947,
+                "Calf Size": 36.81380,
+                "Upper Arm Size": 25.16563,
+                "Forearm Size": 22.76084,
+                "Hand Size": 20.51066
+          },
           "hairstyle": "30",
           "hair_color": "6B4F30FF",
           "camera_view": "front",

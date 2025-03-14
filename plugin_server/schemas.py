@@ -36,8 +36,7 @@ class GenUserDetail(BaseModel):
 	face_shape: str
 	skin_tone: int
 	pose: str
-	body_dimensions: List[dict]
-	body_dimension_lengths: List[dict]
+	real_world_measurements: dict
 	hairstyle: str
 	hair_color: str
 	camera_view: str
