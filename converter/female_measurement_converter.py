@@ -39,11 +39,30 @@ def get_adjusted_inputs(inputs):
     #     "Hand Size": 20.51066
     # }
 
+    # Hand size and length mapping
+    hand_size_adjustments = {
+        "Small": 17.0,
+        "Medium": 21.0,
+        "Large": 25.0
+    }
+
+    hand_length_adjustments = {
+        "Small": 15.0,
+        "Medium": 19.0,
+        "Large": 22.0
+    }
+
     adjusted = {}
     for key, value in inputs.items():
-        if "Calf Length" in key:
-            # Example adjustment: increase calf length by 5cm
-            adjusted[key] = value + 0
+        if key == "Hand Size":
+            # Convert string size to numeric value
+            adjusted[key] = hand_size_adjustments.get(value, 21.0)  # Default to Medium if invalid
+        elif key == "Hand Length":
+            # Convert string length to numeric value
+            adjusted[key] = hand_length_adjustments.get(value, 19.0)  # Default to Medium if invalid
+        elif key == "Underbust":
+            # Convert Underbust to Cup (Cup = Bust - Underbust)
+            adjusted["Cup"] = inputs["Bust"] - value
         else:
             # Leave all other measurements unchanged.
             adjusted[key] = value
