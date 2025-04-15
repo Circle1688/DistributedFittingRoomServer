@@ -166,9 +166,12 @@ def generate_process(task_id, args):
             if source_image_path:
                 request_data = args["data"]
 
-                server_logger.info("UE...")
-                # UE生成图像
-                ue_images_folder = ue_process(request_data)
+                ue_images_folder = None
+
+                if task_type != "image_to_video":
+                    server_logger.info("UE...")
+                    # UE生成图像
+                    ue_images_folder = ue_process(request_data)
 
                 if task_type == "image":
                     server_logger.info("FaceFusion image...")
