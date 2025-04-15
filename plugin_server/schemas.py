@@ -105,4 +105,5 @@ class GalleryRequest(BaseModel):
 
 class ImageToVideoRequest(BaseModel):
 	image: str
+	video_options: VideoOptions
 	task_options: TaskOptions

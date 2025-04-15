@@ -279,7 +279,8 @@ body_dimensions is a list, you need to add the key-value pairs.
       "task_options":{
           "vip": true,
           "limit": 5
-      }
+      },
+      "render_mode": "2D_Kling"
 }
 ```
 
@@ -363,7 +364,8 @@ body_dimensions is a list, you need to add the key-value pairs.
       "task_options":{
           "vip": true,
           "limit": 5
-      }
+      },
+      "render_mode": "2D_Kling"
 }
 ```
 
@@ -408,6 +410,50 @@ body_dimensions is a list, you need to add the key-value pairs.
    "task_id": "string"
 }
 ```
+
+
+
+### /image_to_video
+
+**POST**
+
+**Authorization**
+
+
+
+body_dimensions is a list, you need to add the key-value pairs.
+
+
+
+#### Request body
+
+```json
+{
+  	  "image":"",
+      "video_options":{
+          "duration": 5,
+          "negative_prompt": "",
+          "prompt": "",
+          "seed": 0
+      },
+      "task_options":{
+          "vip": true,
+          "limit": 5
+      }
+}
+```
+
+
+
+#### Responses
+
+```json
+{
+   "task_id": "string"
+}
+```
+
+
 
 
 
@@ -560,11 +606,11 @@ position = n
 
 #### Excel Example
 
-| URL                   | Brand  | Gender | Name   | Colors         | Colors Hex              | Sizes       |
-| --------------------- | ------ | ------ | ------ | -------------- | ----------------------- | ----------- |
-| https://example.com/1 | BrandA | Male   | Cloth1 | Red,Blue,Green | #FF0000,#0000FF,#008000 | S,M,L       |
-| https://example.com/2 | BrandB | Female | Cloth2 | Black,White    | #000000,#FFFFFF         | XS,S,M,L,XL |
-| https://example.com/3 | BrandC | Female | Cloth3 | Yellow,Purple  | #FFFF00,#800080         | M,L,XL,XXL  |
+| URL                   | Brand  | Gender | Name   | Render Mode | Colors         | Colors Hex              | Sizes       |
+| --------------------- | ------ | ------ | ------ | ----------- | -------------- | ----------------------- | ----------- |
+| https://example.com/1 | BrandA | Male   | Cloth1 | 2D_Kling    | Red,Blue,Green | #FF0000,#0000FF,#008000 | S,M,L       |
+| https://example.com/2 | BrandB | Female | Cloth2 | 3D          | Black,White    | #000000,#FFFFFF         | XS,S,M,L,XL |
+| https://example.com/3 | BrandC | Female | Cloth3 | 3D          | Yellow,Purple  | #FFFF00,#800080         | M,L,XL,XXL  |
 
 
 
@@ -619,6 +665,7 @@ position = n
         "L"
     ],
     "name": "Cloth1",
+    "render_mode": "3D",
     "brand": "BrandA",
     "colors_hex": [
         "#FF0000",
