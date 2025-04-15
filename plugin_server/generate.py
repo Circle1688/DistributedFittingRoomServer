@@ -93,15 +93,19 @@ def process_facefusion_image(request_data, source_image_path, ue_images_folder, 
                     human_image_path = file['filepath']
                     if not virtual_try_on(render_mode, human_image_path, request_data):
                         return False
-                    # 生成缩略图
+
                     # 压缩
                     img = Image.open(human_image_path)
 
-                    file_name, file_extension = human_image_path.rsplit('.', 1)
-                    thumbnail_path = f"{file_name}_thumbnail.jpg"
-
                     # 以指定质量保存压缩后的结果
-                    img.save(thumbnail_path, quality=100)
+                    img.save(human_image_path, quality=100)
+
+                    # 生成缩略图
+                    image_options = request_data['image_options']
+                    quality = image_options['quality']
+                    thumbnail_width = image_options['thumbnail_width']
+
+                    compress_image(human_image_path, quality, thumbnail_width)
 
         # 上传到oss
         return upload_files(output_path, user_id)

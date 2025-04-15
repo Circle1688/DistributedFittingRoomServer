@@ -55,7 +55,7 @@ def poll_for_result(task_id, token):
         "Content-Type": "application/json"
     }
 
-    print("⏳ Polling for result...")
+    print("Polling for result...")
     while True:
         response = requests.get(url, headers=headers)
         data = response.json()
