@@ -221,10 +221,6 @@ Image file
 
 
 
-body_dimensions is a list, you need to add the key-value pairs.
-
-
-
 #### Request body
 
 ```json
@@ -301,10 +297,6 @@ body_dimensions is a list, you need to add the key-value pairs.
 **POST**
 
 **Authorization**
-
-
-
-body_dimensions is a list, you need to add the key-value pairs.
 
 
 
@@ -418,10 +410,6 @@ body_dimensions is a list, you need to add the key-value pairs.
 **POST**
 
 **Authorization**
-
-
-
-body_dimensions is a list, you need to add the key-value pairs.
 
 
 
@@ -643,6 +631,7 @@ position = n
 ```json
 {
     "url":"https://example.com/1",
+    "brand":"",
     "name":"cloth1"
 }
 ```
@@ -674,19 +663,4 @@ position = n
     ]
 }
 ```
-
-
-
-# API Call Example
-
-1. /register
-2. /login
-3. /update_user_details
-4. /upload_avatar
-5. /generate
-6. Poll the **/generate/{taskid}** every 5 seconds using the task id
-7. When status is SUCCESS, go next step
-8. /get_gallery
-9. Use task id to match the image
-10. /get_gallery_image/{url}
 
