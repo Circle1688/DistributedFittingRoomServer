@@ -36,13 +36,13 @@ async def upload_clothes(file: UploadFile = File(...), db: Session = Depends(get
 	# 解析 Excel 并写入数据库
 	for row in ws.iter_rows(min_row=2, values_only=True):  # 假设第一行是表头
 		try:
-			url, brand, gender, name, colors, colors_hex, sizes = row
+			url, brand, gender, name, render_mode, colors, colors_hex, sizes = row
 			# 将字符串转换为数组
 			colors = json.dumps(colors.split(",") if isinstance(colors, str) else [])
 			colors_hex = json.dumps(colors_hex.split(",") if isinstance(colors_hex, str) else [])
 			sizes = json.dumps(sizes.split(",") if isinstance(sizes, str) else [])
 
-			clothes = Clothes(url=url, brand=brand, gender=gender, name=name, colors=colors, colors_hex=colors_hex, sizes=sizes)
+			clothes = Clothes(url=url, brand=brand, gender=gender, name=name, render_mode=render_mode, colors=colors, colors_hex=colors_hex, sizes=sizes)
 			db.add(clothes)
 		except Exception as e:
 			raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f"Error processing row {row}: {str(e)}")

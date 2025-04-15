@@ -5,6 +5,9 @@ from plugin_server.upscale import upscale_process
 
 from plugin_server.utils import *
 
+from plugin_server.try_on import virtual_try_on
+
+
 # 创建临时文件夹
 if not os.path.exists(TEMP_DIR):
     os.mkdir(TEMP_DIR)
@@ -64,6 +67,70 @@ def update_task_status(user_id, task_id, status):
     return False
 
 
+def process_upscale(video_url, output_path, task_id, user_id):
+    # 下载视频
+    input_path = download_file(video_url, download_dir=TEMP_DOWNLOAD_DIR)
+
+    video_output_path = os.path.join(output_path, f'{task_id}_upscale.mp4')
+
+    if upscale_process(input_path, video_output_path):
+        # 生成视频缩略图
+        extract_video_cover(video_output_path)
+        # 上传到oss
+        return upload_files(output_path, user_id)
+    return False
+
+
+def process_facefusion_image(request_data, source_image_path, ue_images_folder, output_path, task_id, user_id):
+    # facefusion图像
+    if facefusion_image(task_id, source_image_path, ue_images_folder, output_path, request_data['image_options']):
+
+        render_mode = request_data['render_mode']
+        if render_mode != "3D":
+            # 虚拟试穿
+            for file in get_files(output_path):
+                if not file['filename'].endswith("_thumbnail.jpg"):
+                    human_image_path = file['filepath']
+                    if not virtual_try_on(render_mode, human_image_path, request_data):
+                        return False
+                    # 生成缩略图
+                    # 压缩
+                    img = Image.open(human_image_path)
+
+                    file_name, file_extension = human_image_path.rsplit('.', 1)
+                    thumbnail_path = f"{file_name}_thumbnail.jpg"
+
+                    # 以指定质量保存压缩后的结果
+                    img.save(thumbnail_path, quality=100)
+
+        # 上传到oss
+        return upload_files(output_path, user_id)
+
+
+def process_pre_video(request_data, source_image_path, ue_images_folder):
+    target_image_path = find_png_files(ue_images_folder)[0]
+
+    image_output_path = os.path.join(TEMP_DIR, 'temp.png')
+
+    # 首次换脸
+    first_result, image_output_path = facefusion_image_internal(source_image_path, target_image_path,
+                                                                image_output_path)
+    # 首次换脸成功
+    if first_result:
+
+        # 渲染模式
+        render_mode = request_data['render_mode']
+
+        if render_mode != "3D":
+            # 虚拟试穿
+            if not virtual_try_on(render_mode, image_output_path, request_data):
+                return None
+
+        return image_output_path
+    else:
+        return None
+
+
 def generate_process(task_id, args):
     user_id = args["user_id"]
     result = False
@@ -81,18 +148,11 @@ def generate_process(task_id, args):
         clear_folder(output_path)
 
         task_type = args['task_type']
+
+        # upscale
         if task_type == "upscale":
             video_url = args["data"]["video_url"]
-            # 下载视频
-            input_path = download_file(video_url, download_dir=TEMP_DOWNLOAD_DIR)
-
-            video_output_path = os.path.join(output_path, f'{task_id}_upscale.mp4')
-
-            if upscale_process(input_path, video_output_path):
-                # 生成视频缩略图
-                extract_video_cover(video_output_path)
-                # 上传到oss
-                result = upload_files(output_path, user_id)
+            result = process_upscale(video_url, output_path, task_id, user_id)
 
         else:
             # 下载头像
@@ -104,31 +164,35 @@ def generate_process(task_id, args):
 
                 server_logger.info("UE...")
                 # UE生成图像
-                images_folder = ue_process(request_data)
+                ue_images_folder = ue_process(request_data)
 
                 if task_type == "image":
                     server_logger.info("FaceFusion image...")
                     # facefusion图像
-                    if facefusion_image(task_id, source_image_path, images_folder, output_path,
-                                        request_data['image_options']):
-                        # 上传到oss
-                        result = upload_files(output_path, user_id)
+                    result = process_facefusion_image(request_data, source_image_path, ue_images_folder, output_path, task_id, user_id)
 
-                elif task_type == "video":
-                    target_image_path = find_png_files(images_folder)[0]
+                else:
+                    # pixverse的流程
+                    pre_video = False
+                    pixverse_input_image_path = None
 
-                    image_output_path = os.path.join(TEMP_DIR, 'temp.png')
+                    if task_type == "video":
+                        server_logger.info("Pre swap face...")
+                        pixverse_input_image_path = process_pre_video(request_data, source_image_path, ue_images_folder)
+                        if pixverse_input_image_path:
+                            pre_video = True
 
-                    server_logger.info("Pre swap face...")
-                    # 首次换脸
-                    first_result, image_output_path = facefusion_image_internal(source_image_path, target_image_path,
-                                                                                image_output_path)
-                    # 首次换脸成功
-                    if first_result:
+                    elif task_type == "image_to_video":
+                        # 下载图片
+                        image_url = args["data"]["image"]
+                        pixverse_input_image_path = download_file(image_url, download_dir=TEMP_DOWNLOAD_DIR)
+                        pre_video = True
+
+                    if pre_video:
                         server_logger.info("PixVerse...")
                         # 处理视频
                         video_path = os.path.join(TEMP_DIR, 'temp.mp4')
-                        if pixverse_process(image_output_path, video_path, request_data['video_options']):
+                        if pixverse_process(pixverse_input_image_path, video_path, request_data['video_options']):
                             server_logger.info("Process video...")
 
                             # 视频换脸

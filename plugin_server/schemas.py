@@ -69,6 +69,7 @@ class GenerateRequest(BaseModel):
 	apparel_details: ApparelDetail
 	image_options: ImageOptions
 	task_options: TaskOptions
+	render_mode: str
 
 
 class VideoGenerateRequest(BaseModel):
@@ -76,6 +77,7 @@ class VideoGenerateRequest(BaseModel):
 	apparel_details: ApparelDetail
 	video_options: VideoOptions
 	task_options: TaskOptions
+	render_mode: str
 
 
 class ClothesRequest(BaseModel):
@@ -99,3 +101,8 @@ class GalleryRequest(BaseModel):
 	user_id: int
 	source_url: str
 	thumbnail_url: str
+
+
+class ImageToVideoRequest(BaseModel):
+	image: str
+	task_options: TaskOptions

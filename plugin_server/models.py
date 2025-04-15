@@ -65,6 +65,7 @@ class Clothes(Base):
 	brand = Column(String(80))
 	gender = Column(String(80))
 	name = Column(String(80))
+	render_mode = Column(String(80))
 	colors = Column(JSON)
 	colors_hex = Column(JSON)
 	sizes = Column(JSON)

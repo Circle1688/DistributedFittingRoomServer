@@ -70,6 +70,18 @@ async def upscale(request: UpscaleRequest, user_id: int = Depends(get_current_us
                         detail="The number of user tasks exceeded the limit")
 
 
+@router.post("/image_to_video")
+async def image_to_video(request: ImageToVideoRequest, user_id: int = Depends(get_current_user_id),
+                         db: Session = Depends(get_db)):
+    if check_limit(user_id, request, db):
+        task_id = create_generate_task(request, user_id, task_type='image_to_video')
+        add_task(user_id, task_id, db)
+        return {"task_id": task_id}
+    raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                        detail="The number of user tasks exceeded the limit")
+
+
+
 @router.get("/generate/{task_id}")
 async def generate_status(task_id: str, user_id: int = Depends(get_current_user_id)):
     result = AsyncResult(task_id, app=app)
