@@ -6,9 +6,8 @@ def get_adjusted_inputs(inputs):
     """
     Returns a dictionary of adjusted measurements.
 
-    In this example, we:
-      - Increase any measurement with 'Length' in its name by 2%.
-      - Decrease any measurement with 'Size' in its name by 2%.
+    Document Adjustments:
+      - Adjust Muscle and Body Fat to decimal by dividing 100
       - Leave the other values unchanged.
 
     You can modify the adjustment factors or logic as needed.
@@ -24,8 +23,8 @@ def get_adjusted_inputs(inputs):
     #     "Upper Arm Length": 25.20014,
     #     "Forearm Length": 24.77694,
     #     "Hand Length": 18.56700,
-    #     "Muscle": 0.25,
-    #     "Body Fat": 0.20,
+    #     "Muscle": 25,
+    #     "Body Fat": 20,
     #     "Neck Thickness": 32.21194,
     #     "Bust": 96.75247,
     #     "Cup": 15.09754,
@@ -39,33 +38,18 @@ def get_adjusted_inputs(inputs):
     #     "Hand Size": 20.51066
     # }
 
-    # Hand size and length mapping
-    hand_size_adjustments = {
-        "Small": 17.0,
-        "Medium": 21.0,
-        "Large": 25.0
-    }
-
-    hand_length_adjustments = {
-        "Small": 15.0,
-        "Medium": 19.0,
-        "Large": 22.0
-    }
-
     adjusted = {}
     for key, value in inputs.items():
-        if key == "Hand Size":
-            # Convert string size to numeric value
-            adjusted[key] = hand_size_adjustments.get(value, 21.0)  # Default to Medium if invalid
-        elif key == "Hand Length":
-            # Convert string length to numeric value
-            adjusted[key] = hand_length_adjustments.get(value, 19.0)  # Default to Medium if invalid
-        elif key == "Underbust":
+        if key == "Underbust":
             # Convert Underbust to Cup (Cup = Bust - Underbust)
             adjusted["Cup"] = inputs["Bust"] - value
+        elif key in ["Muscle", "Body Fat"]:
+            # Convert whole integer input to decimal
+            adjusted[key] = value / 100
         else:
             # Leave all other measurements unchanged.
             adjusted[key] = value
+
 
     return adjusted
 
