@@ -348,6 +348,7 @@ Image file
           "size2": "L"
       },
       "video_options":{
+          "video_live": false,
           "duration": 5,
           "negative_prompt": "",
           "prompt": "",
@@ -419,6 +420,7 @@ Image file
 {
   	  "image":"",
       "video_options":{
+          "video_live": false,
           "duration": 5,
           "negative_prompt": "",
           "prompt": "",
